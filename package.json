@@ -1,0 +1,11 @@
+{
+  "name": "icall",
+  "version": "1.0.0",
+  "description": "Api de chamada de alunos",
+  "main": "app.js",
+  "scripts": {
+    "test": "node app.js"
+  },
+  "author": "Patrick J. Macedo",
+  "license": "ISC"
+}
