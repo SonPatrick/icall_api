@@ -7,7 +7,7 @@ var carregarNomesSalas = async () =>{
     var dat = await con.getDatabase();
 
     console.log(`${dat}`);
-    return turno;
+    return dat;
 }
 
 module.exports = {carregarNomesSalas};
