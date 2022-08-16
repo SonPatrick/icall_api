@@ -191,6 +191,28 @@ async function callAlunosSalas(body) {
 
   return {success, message};
 }
+
+
+async function loadAlunosChamadosDia() {
+  let dt = datetime.create();
+  let today = dt.format('d/m/Y');
+  let turno = hoje.getHours() <= 13 ? 'M' : 'T';
+  let success = 0;
+  let message = 'Algo deu errado. Tente novamente';
+
+  const rows = await db.query(`SELECT id, turma, aluno, turno, stts
+                               FROM chamados
+                               WHERE dia = '${today}'
+                               AND turno = '${turno}'
+                               ORDER BY id DESC`);
+  const data = helper.emptyOrRows(rows);  
+  
+  if(data.length >= 1) {
+      success = 1;
+      message = 'Lista de alunos carregada com sucesso.'
+  }
+  return {success, message, data};
+}
 //Torna os modulos disponiveis para as outras salas
 module.exports = {
   load,
@@ -204,4 +226,5 @@ module.exports = {
   loadNomesSalas,
   loadAlunosSalas,
   callAlunosSalas,
+  loadAlunosChamadosDia,
 };

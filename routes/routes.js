@@ -16,7 +16,7 @@ router.get("/loadNomesSalas", async function (req, res, next) {
   }
 });
 
-//CarregaAlunosSalas
+//Carrega alunos salas
 router.get("/loadAlunosSalas", async function (req, res, next) {
   try {
     res.status(200);
@@ -28,11 +28,23 @@ router.get("/loadAlunosSalas", async function (req, res, next) {
   }
 });
 
-//CarregaAlunosSalas
+//Chama aluno
 router.post("/chamarAluno", async function (req, res, next) {
   try {
     res.status(200);
     res.json(await control.callAlunosSalas(req.body));
+  } catch (err) {
+    res.status(404);
+    console.error(`Erro ao carregar os dados.`, err.message);
+    next(err);
+  }
+});
+
+//Carrega alunos chamados do dIa
+router.get("/alunosChamados", async function (req, res, next) {
+  try {
+    res.status(200);
+    res.json(await control.loadAlunosChamadosDia());
   } catch (err) {
     res.status(404);
     console.error(`Erro ao carregar os dados.`, err.message);

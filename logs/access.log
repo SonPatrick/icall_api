@@ -88,3 +88,4 @@
 ::ffff:127.0.0.1 - - [16/Aug/2022:20:31:23 +0000] "POST /chamarAluno HTTP/1.1" 200 52 "-" "insomnia/2022.5.0"
 ::ffff:127.0.0.1 - - [16/Aug/2022:20:31:31 +0000] "POST /chamarAluno HTTP/1.1" 200 52 "-" "insomnia/2022.5.0"
 ::ffff:127.0.0.1 - - [16/Aug/2022:20:31:46 +0000] "POST /chamarAluno HTTP/1.1" 200 52 "-" "insomnia/2022.5.0"
+::ffff:127.0.0.1 - - [16/Aug/2022:21:05:09 +0000] "GET /alunosChamados HTTP/1.1" 200 345 "-" "insomnia/2022.5.0"
