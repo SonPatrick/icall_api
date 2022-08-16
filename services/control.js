@@ -3,6 +3,7 @@ const helper = require("../helper");
 const config = require("../config");
 var datetime = require("node-datetime");
 var dt = datetime.create();
+var hoje = new Date();
 var today = dt.format('d/m/Y');
 var agora = dt.format('H:M:S');
 
@@ -147,9 +148,7 @@ async function getCep(cep) {
 
 async function loadNomesSalas() {
     const rows = await db.query(`SELECT DISTINCT(turma) FROM turma ORDER BY turma ASC`);
-    const data = helper.emptyOrRows(rows); 
-    console.log(hoje);
-    console.log(agora);
+    const data = helper.emptyOrRows(rows);   
     return data;
 }
 
@@ -157,7 +156,7 @@ async function loadAlunosSalas() {
   let turno = hoje.getHours() <= 13 ? 'M' : 'T';
   let success = 0;
   let message = 'Algo deu errado. Tente novamente';
-  
+
   const rows = await db.query(`SELECT id, turma, aluno, turno, stts
                               FROM turma
                               WHERE stts = 0
@@ -177,7 +176,6 @@ async function callAlunosSalas(body) {
   let today = dt.format('d/m/Y');
   let agora = dt.format('H:M:S');
 
-  var hoje = new Date();
   let turno = hoje.getHours() <= 13 ? 'M' : 'T';
   let success = 0;
   let message = 'Aluno não chamado';
