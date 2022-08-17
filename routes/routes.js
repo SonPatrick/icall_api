@@ -40,8 +40,8 @@ router.post("/chamarAluno", async function (req, res, next) {
   }
 });
 
-//Carrega alunos chamados do dIa
-router.get("/alunosChamados", async function (req, res, next) {
+//Carrega alunos chamados do dia
+router.get("/alunosChamadosDia", async function (req, res, next) {
   try {
     res.status(200);
     res.json(await control.loadAlunosChamadosDia());
@@ -52,6 +52,18 @@ router.get("/alunosChamados", async function (req, res, next) {
   }
 });
 
+
+//Carrega alunos não chamados do dia
+router.get("/alunosNaoChamados/:turma", async function (req, res, next) {
+  try {
+    res.status(200);
+    res.json(await control.loadAlunosNaoChamados(req.params.turma));
+  } catch (err) {
+    res.status(404);
+    console.error(`Erro ao carregar os dados.`, err.message);
+    next(err);
+  }
+});
 
 //?-------------------------------------------------------------
 
