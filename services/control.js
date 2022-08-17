@@ -1,157 +1,25 @@
-const axios = require("axios").default;
 const helper = require("../helper");
-const config = require("../config");
 var datetime = require("node-datetime");
 var dt = datetime.create();
 var hoje = new Date();
 var today = dt.format('d/m/Y');
-var agora = dt.format('H:M:S');
-
 process.env.TZ = "America/Belem";
 const db = require("./db");
 
-/* Essa é uma classe de controle de operacoes realizadas no banco de dados */
-
-//SELECT: Carrega todas as informacoes
-async function load(page = 1) {
-  const offset = helper.getOffset(page, config.listPerPage);
-  const rows = await db.query(
-    `SELECT * FROM users LIMIT ${offset},${config.listPerPage}`
-  );
-  const data = helper.emptyOrRows(rows);
-  const meta = { page };
-  return { data, meta };
-}
-
-// Faz o cadastro de uma nova viagem
-async function createTravel(model) {
-  const result = await db.query(
-    `INSERT INTO travel (id_travel, id_agency, price, shipname, city_origin, city_destiny, exit_hour, arrival_hour, exit_day, arrival_day, connections, registered_in) 
-    VALUES (NULL, '${model.id_agency}', '${model.price}', '${model.shipname}', '${model.city_origin}', '${model.city_destiny}', '${model.exit_hour}', '${model.arrival_hour}', '${model.exit_day}', '${model.arrival_day}', '${model.connections}', current_timestamp())`
-  );
-
-  let status = 0;
-  let message =
-    "Erro ao cadastrar viagem. Verifique as informações e tente novamente.";
-  if (result.affectedRows) {
-    status = 1;
-    message = "Viagem cadastrada com com sucesso.";
-  }
-  return { message, status };
-}
-
-//SELECT: Busca as informações da viagem
-async function search(page = 1, model) {
-  const offset = helper.getOffset(page, config.listPerPage);
-  const rows = await db.query(
-    `SELECT * 
-     FROM travel
-     WHERE city_origin LIKE '%${model.origin}%'
-     AND city_destiny LIKE '%${model.destiny}%'
-     LIMIT ${offset},${config.listPerPage}`
-  );
-  const data = helper.emptyOrRows(rows);
-  const meta = { page };
-
-  return { data, meta };
-}
-
-//Faz login do usuário no sistema
-async function login(model) {
-  const rows = await db.query(
-    `SELECT * 
-      FROM users 
-      WHERE email='${model.email}'
-      AND pass='${model.pass}';`
-  );
-  let status = 0;
-  let message =
-    "Erro ao entrar no sistema. Verifique seus dados e tente novamente.";
-  const data = helper.emptyOrRows(rows);
-
-  if (rows.length > 0) {
-    status = 1;
-    message = "Login efetuado com sucesso.";
-  }
-  return { message, status, data };
-}
-
-//Cria um novo cadastro
-async function create(model) {
-  const result = await db.query(
-    `INSERT INTO users (id_user, fullname, email, phone, pass, city, registeredIn)
-     VALUES (NULL, '${model.fullname}', '${model.email}', '${model.phone}', '${model.pass}', '${model.city}', current_timestamp());`
-  );
-
-  let status = 0;
-  let message =
-    "Erro ao fazer o cadastro. Verifique seus dados e tente novamente.";
-  if (result.affectedRows) {
-    status = 1;
-    message = "Cadastro criado com sucesso.";
-  }
-  return { message, status };
-}
-
-//Atualiza o cadastro
-async function update(id, model) {
-  const result = await db.query(
-    `UPDATE users 
-      SET fullname = '${model.fullname}',
-          email = '${model.email}' 
-      WHERE id_user = ${id};`
-  );
-
-  let message = "Erro ao atualizar o cadastro.";
-  if (result.affectedRows) {
-    message = "Dados atualizados com sucesso.";
-  }
-  return { message };
-}
-
-//Remove o cadastro
-async function remove(id) {
-  const result = await db.query(`DELETE FROM users WHERE id_user=${id}`);
-  let status = 0;
-  let message = "Erro ao remover o cadastro";
-  if (result.affectedRows) {
-    status = 1;
-    message = "Cadastro removido com sucesso";
-  }
-  return { status, message };
-}
-
-//Busca os dados do cep informado
-async function getCep(cep) {
-  let status = 0;
-  let message = "Endereço não encontrado.";
-  let data = "";
-
-  try {
-    let response = await (
-      await axios(`https://viacep.com.br/ws/${cep}/json/`)
-    ).data;
-    if (response) {
-      status = 1;
-      message = "Endereço encontrado.";
-      data = response;
-    }
-    console.log(data);
-  } catch (error) {
-    status = 0;
-    message = "Erro ao buscar o endereço";
-    console.error(error);
-  }
-  return { status, message, data };
-}
-//? ---------- QUERIES -----------------------------
-
+/**
+ * Carrega o nome das salas
+ * @returns success (int), message (String), results (Data Rows) 
+ */
 async function loadNomesSalas() {
     const rows = await db.query(`SELECT DISTINCT(turma) FROM turma ORDER BY turma ASC`);
     const data = helper.emptyOrRows(rows);   
     return data;
 }
 
+/**
+ * Carrega o nome dos alunos relacionados às suas salas e turnos
+ * @returns success (int), message (String), results (Data Rows) 
+ */
 async function loadAlunosSalas() {
   let turno = hoje.getHours() <= 13 ? 'M' : 'T';
   let success = 0;
@@ -162,15 +30,20 @@ async function loadAlunosSalas() {
                               WHERE stts = 0
                               AND turno = '${turno}'
                               ORDER BY turma ASC`);
-  const data = helper.emptyOrRows(rows);  
+  const results = helper.emptyOrRows(rows);  
   
-  if(data.length >= 1) {
+  if(results.length >= 1) {
       success = 1;
       message = 'Lista de alunos carregada com sucesso.'
   }
-  return {success, message, data};
+  return {success, message, results};
 }
 
+/**
+ * Chama o aluno pelo nome
+ * @Params body {aluno (String), turma (String)}
+ * @returns success (int), message (String), results (Data Rows) 
+ */
 async function callAlunosSalas(body) {
   let dt = datetime.create();
   let today = dt.format('d/m/Y');
@@ -192,6 +65,10 @@ async function callAlunosSalas(body) {
   return {success, message};
 }
 
+/**
+ * Carrega os alunos chamados do dia
+ * @returns success (int), message (String), results (Data Rows) 
+ */
 async function loadAlunosChamadosDia() {
   let dt = datetime.create();
   let today = dt.format('d/m/Y');
@@ -213,7 +90,11 @@ async function loadAlunosChamadosDia() {
   return {success, message, results};
 }
 
-
+/**
+ * Carrega os alunos não chamados por turma
+ * @Params body {turma {String}
+ * @returns success (int), message (String), results (Data Rows) 
+ */
 async function loadAlunosNaoChamados(turma) {
   let dt = datetime.create();
   let today = dt.format('d/m/Y');
@@ -237,11 +118,14 @@ async function loadAlunosNaoChamados(turma) {
   return {success, message, results};
 }
 
-
+/**
+ * Carrega os alunos chamados por turma
+ * @Params body {turma {String}
+ * @returns success (int), message (String), results (Data Rows) 
+ */
 async function loadAlunosChamadosTurma(turma) {
   let dt = datetime.create();
   let today = dt.format('d/m/Y');
-  let turno = hoje.getHours() <= 13 ? 'M' : 'T';
   let success = 0;
   let message = 'Algo deu errado. Tente novamente';
 
@@ -259,20 +143,113 @@ async function loadAlunosChamadosTurma(turma) {
   return {success, message, results};
 }
 
+/**
+ * Carrega o último aluno chamado por turma
+ * @Params body {turma {String}
+ * @returns success (int), message (String), results (Data Rows) 
+ */
+async function loadUltimoAlunoTurma(turma) {
+  let dt = datetime.create();
+  let today = dt.format('d/m/Y');
+  let success = 0;
+  let message = 'Algo deu errado. Tente novamente';
+
+  const rows = await db.query(`SELECT id, turma, aluno, turno, stts
+                               FROM chamados
+                               WHERE dia = '${today}'
+                               AND turma = '${turma}'                             
+                               ORDER BY id DESC
+                               LIMIT 1`);
+  const results = helper.emptyOrRows(rows);  
+  
+  if(results.length >= 1) {
+      success = 1;
+      message = 'Lista de alunos carregada com sucesso.'
+  }
+  return {success, message, results};
+}
+
+/**
+ * Carrega os alunos não chamados por turma
+ * @Params body {aluno {String}
+ * @returns success (int), message (String), results (Data Rows) 
+ */
+async function registraAlunoFalado(aluno){
+  let success = 0;
+  let message = 'Algo deu errado. Tente novamente';
+
+  await db.query(`UPDATE chamados SET stts = 1 WHERE aluno = '${aluno}'`)
+  .then(() => {        
+      success = 1;
+      message = 'Aluno chamado com sucesso.'
+  }).catch(()=>{
+      success = 0;
+      message = 'Um erro ocorreu'
+  });
+
+  return {success, message};
+}
+
+/**
+ * Carrega o último aluno não falado por turma
+ * @Params body {turma {String}
+ * @returns success (int), message (String), results (Data Rows) 
+ */
+async function carregaAlunoNaoFalado(turma) {
+  let dt = datetime.create();
+  let today = dt.format('d/m/Y');
+  let success = 0;
+  let message = 'Algo deu errado. Tente novamente';
+
+  const rows = await db.query(`SELECT id, turma, aluno, turno, stts
+                                FROM chamados
+                                WHERE dia = '${today}'
+                                AND turma = '${turma}'
+                                AND stts = 0
+                                ORDER BY id DESC`);
+  const results = helper.emptyOrRows(rows);  
+  
+  if(results.length >= 1) {
+      success = 1;
+      message = 'Lista de alunos carregada com sucesso.'
+  }
+  return {success, message, results};
+}
+
+/**
+ * Carrega o balanço de chamados do dia
+ * @Params dia (String)
+ * @returns success (int), message (String), results (Data Rows) 
+ */
+async function carregaBalancoDia(dia = today) {
+  let success = 0;
+  let message = 'Nenhum balanço a ser carregado';
+
+  const rows = await db.query(`SELECT COUNT(id) AS total, dia
+                               FROM backup
+                               WHERE dia = ${dia}
+                               GROUP BY dia
+                               ORDER BY dia DESC`);
+  const results = helper.emptyOrRows(rows);  
+  
+  if(results.length >= 1) {
+      success = 1;
+      message = 'Lista de alunos carregada com sucesso.'
+  }
+  return {success, message, results};
+}
+
+
 //Torna os modulos disponiveis para as outras salas
-module.exports = {
-  load,
-  create,
-  update,
-  remove,
-  login,
-  getCep,
-  createTravel,
-  search,
+module.exports = { 
   loadNomesSalas,
   loadAlunosSalas,
   callAlunosSalas,
   loadAlunosChamadosDia,
   loadAlunosNaoChamados,
   loadAlunosChamadosTurma,
+  loadUltimoAlunoTurma,
+  registraAlunoFalado,
+  carregaAlunoNaoFalado,
+  carregaBalancoDia,
 };
