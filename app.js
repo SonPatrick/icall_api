@@ -39,6 +39,15 @@ app
   })
   .post("/status", (req, res) => {
     res.json({ status: 1, message: `O serviço está de boas` });
+  })
+  .put("/status", (req, res) => {
+    res.json({ status: 1, message: `O serviço está ok` });
+  })
+  .delete("/status", (req, res) => {
+    res.json({ status: 1, message: `O serviço está normal` });
+  })
+  .patch("/status", (req, res) => {
+    res.json({ status: 1, message: `O serviço está funcionando` });
   });
 
 //Manipulacao de erros
