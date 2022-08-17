@@ -4,7 +4,6 @@ const router = express.Router();
 
 /* Essa é uma classe responsavel pelo gerenciamento das operacoes no banco de dados com base nas rotas acessadas */
 
-
 router.get("/nomesSalas", async function (req, res, next) {
   try {
     res.status(200);
@@ -51,7 +50,6 @@ router.get("/alunosChamadosDia", async function (req, res, next) {
     next(err);
   }
 });
-
 
 //Carrega alunos não chamados do dia
 router.get("/alunosNaoChamados/:turma", async function (req, res, next) {

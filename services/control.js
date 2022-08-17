@@ -61,7 +61,6 @@ async function callAlunosSalas(body) {
       message = 'Aluno chamado com sucesso.'
     });    
   });
-
   return {success, message};
 }
 
@@ -182,11 +181,10 @@ async function registraAlunoFalado(aluno){
   .then(() => {        
       success = 1;
       message = 'Aluno chamado com sucesso.'
-  }).catch(()=>{
+  }).catch((e)=>{
       success = 0;
-      message = 'Um erro ocorreu'
+      message = `Um erro ocorreu. ${e}`;
   });
-
   return {success, message};
 }
 
