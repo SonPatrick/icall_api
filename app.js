@@ -16,8 +16,11 @@ app.use(express.json());
 app.use(morgan("combined"));
 app.use(express.urlencoded({ extended: true }));
 
-//Define o logger  {combined, common , {:id :method :url :response-time} }
-var accessLogStream = fs.createWriteStream(path.join(`${__dirname}/logs`, "access.log"), {flags: "a"});
+//Define o logger {combined, common , {:id :method :url :response-time} }
+var accessLogStream = fs.createWriteStream(
+  path.join(`${__dirname}/logs`, "access.log"),
+  { flags: "a" }
+);
 
 app.use(morgan("combined", { stream: accessLogStream }));
 
@@ -30,9 +33,13 @@ app.listen(port, () => {
 app.use("/", route);
 
 //Rota de verificacao que exibe o status da aplicacao
-app.get("/status", (req, res) => {
-  res.json({ status: 1, message: "O serviço está funcionando normalmente" });
-});
+app
+  .get("/status", (req, res) => {
+    res.json({ status: 1, message: `O serviço está funcionando normalmente` });
+  })
+  .post("/status", (req, res) => {
+    res.json({ status: 1, message: `O serviço está de boas` });
+  });
 
 //Manipulacao de erros
 app.use((err, req, res, next) => {
