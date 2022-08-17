@@ -127,3 +127,5 @@
 ::ffff:127.0.0.1 - - [17/Aug/2022:16:56:55 +0000] "DELETE /status HTTP/1.1" 200 48 "-" "insomnia/2022.5.0"
 ::ffff:127.0.0.1 - - [17/Aug/2022:16:57:02 +0000] "PATCH /status HTTP/1.1" 404 147 "-" "insomnia/2022.5.0"
 ::ffff:127.0.0.1 - - [17/Aug/2022:16:57:18 +0000] "PATCH /status HTTP/1.1" 200 53 "-" "insomnia/2022.5.0"
+::ffff:127.0.0.1 - - [17/Aug/2022:16:58:33 +0000] "HEAD /status HTTP/1.1" 200 65 "-" "insomnia/2022.5.0"
+::ffff:127.0.0.1 - - [17/Aug/2022:16:58:36 +0000] "HEAD /status HTTP/1.1" 200 65 "-" "insomnia/2022.5.0"

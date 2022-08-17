@@ -32,7 +32,7 @@ app.listen(port, () => {
 //Definindo a rota principal e apontando o gerenciador de rotas da API
 app.use("/", route);
 
-//Rota de verificacao que exibe o status da aplicacao
+//Rota encadeada multi metodos de verificacao que exibe o status da aplicacao
 app
   .get("/status", (req, res) => {
     res.json({ status: 1, message: `O serviço está funcionando normalmente` });
@@ -47,7 +47,7 @@ app
     res.json({ status: 1, message: `O serviço está normal` });
   })
   .patch("/status", (req, res) => {
-    res.json({ status: 1, message: `O serviço está funcionando` });
+    res.json({ status: 1, message: `O se]rviço está funcionando` });
   });
 
 //Manipulacao de erros
