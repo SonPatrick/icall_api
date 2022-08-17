@@ -5,7 +5,7 @@ const router = express.Router();
 /* Essa é uma classe responsavel pelo gerenciamento das operacoes no banco de dados com base nas rotas acessadas */
 //?--------------------QUERIES----------------------------------
 //CarregaNomesSalas
-router.get("/loadNomesSalas", async function (req, res, next) {
+router.get("/nomesSalas", async function (req, res, next) {
   try {
     res.status(200);
     res.json(await control.loadNomesSalas());
@@ -17,7 +17,7 @@ router.get("/loadNomesSalas", async function (req, res, next) {
 });
 
 //Carrega alunos salas
-router.get("/loadAlunosSalas", async function (req, res, next) {
+router.get("/alunosSalas", async function (req, res, next) {
   try {
     res.status(200);
     res.json(await control.loadAlunosSalas());
@@ -55,6 +55,18 @@ router.get("/alunosChamadosDia", async function (req, res, next) {
 
 //Carrega alunos não chamados do dia
 router.get("/alunosNaoChamados/:turma", async function (req, res, next) {
+  try {
+    res.status(200);
+    res.json(await control.loadAlunosNaoChamados(req.params.turma));
+  } catch (err) {
+    res.status(404);
+    console.error(`Erro ao carregar os dados.`, err.message);
+    next(err);
+  }
+});
+
+//Carrega alunos chamados por turma
+router.get("/alunosChamadosTurma/:turma", async function (req, res, next) {
   try {
     res.status(200);
     res.json(await control.loadAlunosNaoChamados(req.params.turma));
