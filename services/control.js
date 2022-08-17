@@ -200,11 +200,11 @@ async function carregaAlunoNaoFalado(turma) {
   let message = 'Algo deu errado. Tente novamente';
 
   const rows = await db.query(`SELECT id, turma, aluno, turno, stts
-                                FROM chamados
-                                WHERE dia = '${today}'
-                                AND turma = '${turma}'
-                                AND stts = 0
-                                ORDER BY id DESC`);
+                               FROM chamados
+                               WHERE dia = '${today}'
+                               AND turma = '${turma}'
+                               AND stts = 0
+                               ORDER BY id DESC`);
   const results = helper.emptyOrRows(rows);  
   
   if(results.length >= 1) {
@@ -236,7 +236,6 @@ async function carregaBalancoDia(dia = today) {
   }
   return {success, message, results};
 }
-
 
 //Torna os modulos disponiveis para as outras salas
 module.exports = { 
