@@ -1,3 +1,4 @@
+const cookieParser = require("cookie-parser");
 const route = require("./routes/routes");
 const port = process.env.PORT || 5000;
 const express = require("express");
@@ -12,9 +13,11 @@ const app = express();
 //Definindo o comportamento da API assim como seus componentes
 app.use(cors());
 app.use(helmet());
+app.use(cookieParser());
 app.use(express.json());
 app.use(morgan("combined"));
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, "public")));
 
 //Define o logger {combined, common , {:id :method :url :response-time} }
 var accessLogStream = fs.createWriteStream(
@@ -57,3 +60,5 @@ app.use((err, req, res, next) => {
   res.status(statusCode).json({ message: err.message });
   return;
 });
+
+module.exports = app;
