@@ -1,8 +1,8 @@
 const helper = require("../helper");
-var datetime = require("node-datetime");
-var dt = datetime.create();
-var hoje = new Date();
-var today = dt.format('d/m/Y');
+let datetime = require("node-datetime");
+let dt = datetime.create();
+let hoje = new Date();
+let today = dt.format('d/m/Y');
 process.env.TZ = "America/Belem";
 const db = require("./db");
 
@@ -25,12 +25,12 @@ async function loadAlunosSalas() {
   let success = 0;
   let message = 'Algo deu errado. Tente novamente';
 
-  const rows = await db.query(`SELECT id, turma, aluno, turno, stts
+  let rows = await db.query(`SELECT id, turma, aluno, turno, stts
                               FROM turma
                               WHERE stts = 0
                               AND turno = '${turno}'
                               ORDER BY turma ASC`);
-  const results = helper.emptyOrRows(rows);  
+  let results = helper.emptyOrRows(rows);  
   
   if(results.length >= 1) {
       success = 1;
