@@ -140,3 +140,7 @@
 ::ffff:127.0.0.1 - - [19/Oct/2022:13:43:11 +0000] "GET /alunosChamadosDia HTTP/1.1" 200 144 "-" "insomnia/2022.6.0"
 ::ffff:127.0.0.1 - - [19/Oct/2022:13:43:16 +0000] "GET /alunosChamadosTurma/2C HTTP/1.1" 200 144 "-" "insomnia/2022.6.0"
 ::ffff:127.0.0.1 - - [19/Oct/2022:13:43:20 +0000] "GET /alunosNaoChamados/2C HTTP/1.1" 200 144 "-" "insomnia/2022.6.0"
+::ffff:127.0.0.1 - - [21/Oct/2022:20:53:38 +0000] "GET /alunosChamadosDia HTTP/1.1" 500 31 "-" "insomnia/2022.6.0"
+::ffff:127.0.0.1 - - [21/Oct/2022:20:54:51 +0000] "GET /alunosChamadosDia HTTP/1.1" 200 227 "-" "insomnia/2022.6.0"
+::ffff:127.0.0.1 - - [21/Oct/2022:21:00:36 +0000] "GET /alunosSalas HTTP/1.1" 200 8895 "-" "insomnia/2022.6.0"
+::1 - - [21/Oct/2022:21:06:03 +0000] "GET /alunosSalas HTTP/1.1" 200 8895 "http://localhost:62881/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36"
