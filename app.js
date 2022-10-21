@@ -57,3 +57,5 @@ app.use((err, req, res, next) => {
   res.status(statusCode).json({ message: err.message });
   return;
 });
+
+module.exports = { app };
