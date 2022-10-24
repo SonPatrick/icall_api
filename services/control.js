@@ -102,7 +102,7 @@ async function carregarAlunosChamadosDia() {
  * @Params body {turma {String}
  * @returns success (int), message (String), results (Data Rows)
  */
-async function loadAlunosNaoChamados(turma) {
+async function carregarAlunosNaoChamados(turma) {
   let dt = datetime.create();
   let today = dt.format("d/m/Y");
   let turno = hoje.getHours() <= 13 ? "M" : "T";
@@ -130,7 +130,7 @@ async function loadAlunosNaoChamados(turma) {
  * @Params body {turma {String}
  * @returns success (int), message (String), results (Data Rows)
  */
-async function loadAlunosChamadosTurma(turma) {
+async function carregaAlunosChamadosTurma(turma) {
   let dt = datetime.create();
   let today = dt.format("d/m/Y");
   let success = 0;
@@ -155,7 +155,7 @@ async function loadAlunosChamadosTurma(turma) {
  * @Params body {turma {String}
  * @returns success (int), message (String), results (Data Rows)
  */
-async function loadUltimoAlunoTurma(turma) {
+async function carregaUltimoAlunoTurma(turma) {
   let dt = datetime.create();
   let today = dt.format("d/m/Y");
   let success = 0;
@@ -253,9 +253,9 @@ module.exports = {
   carregaAlunosSalas,
   chamarAluno,
   carregarAlunosChamadosDia,
-  loadAlunosNaoChamados,
-  loadAlunosChamadosTurma,
-  loadUltimoAlunoTurma,
+  carregarAlunosNaoChamados,
+  carregaAlunosChamadosTurma,
+  carregaUltimoAlunoTurma,
   registraAlunoFalado,
   carregaAlunoNaoFalado,
   carregaBalancoDia,
