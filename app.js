@@ -32,21 +32,11 @@ app.use("/", route);
 
 //Rota encadeada multi metodos de verificacao que exibe o status da aplicacao
 app
-  .get("/status", (req, res) =>
-    res.json({ status: 1, message: `O serviço está funcionando normalmente` })
-  )
-  .post("/status", (req, res) =>
-    res.json({ status: 1, message: `O serviço está de boas` })
-  )
-  .put("/status", (req, res) =>
-    res.json({ status: 1, message: `O serviço está ok` })
-  )
-  .delete("/status", (req, res) =>
-    res.json({ status: 1, message: `O serviço está normal` })
-  )
-  .patch("/status", (req, res) =>
-    res.json({ status: 1, message: `O serviço está funcionando` })
-  );
+  .get("/status", (req, res) => res.json({ status: 1, message: `O serviço está funcionando normalmente` }))
+  .post("/status", (req, res) => res.json({ status: 1, message: `O serviço está de boas` }))
+  .put("/status", (req, res) => res.json({ status: 1, message: `O serviço está ok` }))
+  .delete("/status", (req, res) => res.json({ status: 1, message: `O serviço está normal` }))
+  .patch("/status", (req, res) => res.json({ status: 1, message: `O serviço está funcionando` }));
 
 //Manipulacao de erros
 app.use((err, req, res, next) => {
