@@ -124,6 +124,9 @@ async function carregarAlunosNaoChamados(turma) {
   if (results.length >= 1) {
     success = 1;
     message = "Lista de alunos carregada com sucesso.";
+  } if (results.length <= 0) {
+    success = 0;
+    message = "nenhum aluno a ser carregado.";
   }
   return { success, message, results };
 }
