@@ -4,10 +4,11 @@ const router = express.Router();
 
 /* Essa é uma classe responsavel pelo gerenciamento das operacoes no banco de dados com base nas rotas acessadas */
 
-router.get("/nomesSalas", async function (req, res, next) {
+//? OP: 01 - Carrega os nomes das salas
+router.get("/carregaNomesSalas", async function (req, res, next) {
   try {
     res.status(200);
-    res.json(await control.loadNomesSalas());
+    res.json(await control.carregaNomesSalas());
   } catch (err) {
     res.status(404);
     console.error(`Erro ao carregar os dados.`, err.message);
@@ -15,11 +16,11 @@ router.get("/nomesSalas", async function (req, res, next) {
   }
 });
 
-//Carrega alunos salas
-router.get("/alunosSalas", async function (req, res, next) {
+//? OP: 02 - Carrega os nomes dos alunos turma
+router.get("/carregaAlunosSalas", async function (req, res, next) {
   try {
     res.status(200);
-    res.json(await control.loadAlunosSalas());
+    res.json(await control.carregaAlunosSalas());
   } catch (err) {
     res.status(404);
     console.error(`Erro ao carregar os dados.`, err.message);
@@ -27,11 +28,11 @@ router.get("/alunosSalas", async function (req, res, next) {
   }
 });
 
-//Chama aluno
+//? OP: 03 - Chama o aluno
 router.post("/chamarAluno", async function (req, res, next) {
   try {
     res.status(200);
-    res.json(await control.callAlunosSalas(req.body));
+    res.json(await control.chamarAluno(req.body));
   } catch (err) {
     res.status(404);
     console.error(`Erro ao carregar os dados.`, err.message);
@@ -39,11 +40,11 @@ router.post("/chamarAluno", async function (req, res, next) {
   }
 });
 
-//Carrega alunos chamados do dia
-router.get("/alunosChamadosDia", async function (req, res, next) {
+//? OP: 04 - Carrega alunos chamados do dia
+router.get("/carregarAlunosChamadosDia", async function (req, res, next) {
   try {
     res.status(200);
-    res.json(await control.loadAlunosChamadosDia());
+    res.json(await control.carregarAlunosChamadosDia());
   } catch (err) {
     res.status(404);
     console.error(`Erro ao carregar os dados.`, err.message);
@@ -51,7 +52,7 @@ router.get("/alunosChamadosDia", async function (req, res, next) {
   }
 });
 
-//Carrega alunos não chamados do dia
+//? OP: 05 - Carrega alunos não chamados do dia
 router.get("/alunosNaoChamados/:turma", async function (req, res, next) {
   try {
     res.status(200);
@@ -63,7 +64,7 @@ router.get("/alunosNaoChamados/:turma", async function (req, res, next) {
   }
 });
 
-//Carrega alunos chamados por turma
+//? OP: 06 - Carrega alunos chamados por turma
 router.get("/alunosChamadosTurma/:turma", async function (req, res, next) {
   try {
     res.status(200);
@@ -75,7 +76,7 @@ router.get("/alunosChamadosTurma/:turma", async function (req, res, next) {
   }
 });
 
-//Carrega alunos chamados do dia
+//?OP: 07 - Carrega alunos chamados do dia
 router.get("/ultimoAluno/:turma", async function (req, res, next) {
   try {
     res.status(200);
@@ -87,7 +88,7 @@ router.get("/ultimoAluno/:turma", async function (req, res, next) {
   }
 });
 
-//registra aluno falado
+//? OP: 08 - Registra aluno falado
 router.post("/registraAlunoFalado", async function (req, res, next) {
   try {
     res.status(200);
@@ -99,7 +100,7 @@ router.post("/registraAlunoFalado", async function (req, res, next) {
   }
 });
 
-//Carrega alunos não chamados da turma
+//? Op: 08 - Carrega alunos não chamados da turma
 router.get("/alunoNaoFalado/:turma", async function (req, res, next) {
   try {
     res.status(200);
@@ -111,7 +112,7 @@ router.get("/alunoNaoFalado/:turma", async function (req, res, next) {
   }
 });
 
-//Carrega alunos não chamados da turma
+//? OP: 09 - Carrega alunos não chamados da turma
 router.post("/balancoDia", async function (req, res, next) {
   try {
     res.status(200);

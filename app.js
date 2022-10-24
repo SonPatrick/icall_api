@@ -25,9 +25,7 @@ var accessLogStream = fs.createWriteStream(
 app.use(morgan("combined", { stream: accessLogStream }));
 
 //Define a porta que a aplicacao vai rodar
-app.listen(port, () => {
-  console.log(`Rodando o servidor na porta ${port}`);
-});
+app.listen(port, () => console.log(`Rodando o servidor na porta ${port}`));
 
 //Definindo a rota principal e apontando o gerenciador de rotas da API
 app.use("/", route);

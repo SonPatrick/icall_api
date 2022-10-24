@@ -6,11 +6,11 @@ let today = dt.format("d/m/Y");
 process.env.TZ = "America/Belem";
 const db = require("./db");
 
-/**
+/** OP: 01
  * Carrega o nome das salas
  * @returns success (int), message (String), results (Data Rows)
  */
-async function loadNomesSalas() {
+async function carregaNomesSalas() {
   const rows = await db.query(
     `SELECT DISTINCT(turma) FROM turma ORDER BY turma ASC`
   );
@@ -18,11 +18,11 @@ async function loadNomesSalas() {
   return data;
 }
 
-/** OP: 2
+/** OP: 02
  * Carrega o nome dos alunos relacionados às suas salas e turnos
  * @returns success (int), message (String), results (Data Rows)
  */
-async function loadAlunosSalas() {
+async function carregaAlunosSalas() {
   let turno = hoje.getHours() <= 13 ? "M" : "T";
   let success = 0;
   let message = "Algo deu errado. Tente novamente";
@@ -41,12 +41,12 @@ async function loadAlunosSalas() {
   return { success, message, results };
 }
 
-/**
+/** OP: 03
  * Chama o aluno pelo nome
  * @Params body {aluno (String), turma (String)}
  * @returns success (int), message (String), results (Data Rows)
  */
-async function callAlunosSalas(body) {
+async function chamarAluno(body) {
   let dt = datetime.create();
   let today = dt.format("d/m/Y");
   let agora = dt.format("H:M:S");
@@ -55,32 +55,39 @@ async function callAlunosSalas(body) {
   let success = 0;
   let message = "Aluno não chamado";
 
-  let query = `INSERT INTO chamados (id, aluno, turma, turno, dia, hora, stts) VALUES(NULL, '${body.aluno}' , '${body.turma}', '${turno}', '${today}', '${agora}', 0)`;
-  let backup = `INSERT INTO backup (id, aluno, turma, turno, dia, hora, stts) VALUES(NULL, '${body.aluno}' , '${body.turma}', '${turno}', '${today}', '${agora}', 0)`;
-
-  await db.query(query).then(async () => {
-    await db.query(backup).then(async () => {
-      success = 1;
-      message = "Aluno chamado com sucesso.";
+  await db
+    .query(
+      `INSERT INTO chamados (id, aluno, turma, turno, dia, hora, stts) VALUES(NULL, '${body.aluno}' , '${body.turma}', '${turno}', '${today}', '${agora}', 0)`
+    )
+    .then(async () => {
+      await db
+        .query(
+          `INSERT INTO backup (id, aluno, turma, turno, dia, hora, stts) VALUES(NULL, '${body.aluno}' , '${body.turma}', '${turno}', '${today}', '${agora}', 0)`
+        )
+        .then(async () => {
+          success = 1;
+          message = "Aluno chamado com sucesso.";
+        });
     });
-  });
   return { success, message };
 }
 
-/**
+/** OP: 04
  * Carrega os alunos chamados do dia
  * @returns success (int), message (String), results (Data Rows)
  */
-async function loadAlunosChamadosDia() {
+async function carregarAlunosChamadosDia() {
   let dt = datetime.create();
   let today = dt.format("d/m/Y");
   let turno = hoje.getHours() <= 13 ? "M" : "T";
   let success = 0;
   let message = "Algo deu errado. Tente novamente";
 
-  let query = `SELECT id, turma, aluno, turno, stts FROM chamados WHERE dia = '${today}' AND turno = '${turno}' ORDER BY id DESC`;
-
-  const rows = await db.query(query);
+  const rows = await db.query(`SELECT id, turma, aluno, turno, stts
+                               FROM chamados
+                               WHERE dia = '${today}'
+                               AND turno = '${turno}'
+                               ORDER BY id DESC`);
   const results = helper.emptyOrRows(rows);
 
   if (results.length >= 1) {
@@ -90,7 +97,7 @@ async function loadAlunosChamadosDia() {
   return { success, message, results };
 }
 
-/**
+/** OP: 05
  * Carrega os alunos não chamados por turma
  * @Params body {turma {String}
  * @returns success (int), message (String), results (Data Rows)
@@ -102,9 +109,13 @@ async function loadAlunosNaoChamados(turma) {
   let success = 0;
   let message = "Algo deu errado. Tente novamente";
 
-  let query = `SELECT id, turma, aluno, turno, stts FROM chamados WHERE dia = '${today}' AND stts = 0 AND turno = '${turno}' AND turma = '${turma}' ORDER BY id DESC`;
-
-  const rows = await db.query(query);
+  const rows = await db.query(`SELECT id, turma, aluno, turno, stts
+                               FROM chamados
+                               WHERE dia = '${today}'
+                               AND stts = 0
+                               AND turno = '${turno}'
+                               AND turma = '${turma}'
+                               ORDER BY id DESC`);
   const results = helper.emptyOrRows(rows);
 
   if (results.length >= 1) {
@@ -114,7 +125,7 @@ async function loadAlunosNaoChamados(turma) {
   return { success, message, results };
 }
 
-/**
+/** OP: 06
  * Carrega os alunos chamados por turma
  * @Params body {turma {String}
  * @returns success (int), message (String), results (Data Rows)
@@ -125,9 +136,11 @@ async function loadAlunosChamadosTurma(turma) {
   let success = 0;
   let message = "Algo deu errado. Tente novamente";
 
-  let query = `SELECT DISTINCT(id), turma, aluno, turno, stts FROM chamados WHERE dia = '${today}' AND turma = '${turma}' ORDER BY id ASC`;
-
-  const rows = await db.query(query);
+  const rows = await db.query(`SELECT DISTINCT(id), turma, aluno, turno, stts
+                               FROM chamados
+                               WHERE dia = '${today}'
+                               AND turma = '${turma}'
+                               ORDER BY id ASC`);
   const results = helper.emptyOrRows(rows);
 
   if (results.length >= 1) {
@@ -137,7 +150,7 @@ async function loadAlunosChamadosTurma(turma) {
   return { success, message, results };
 }
 
-/**
+/** OP: 07
  * Carrega o último aluno chamado por turma
  * @Params body {turma {String}
  * @returns success (int), message (String), results (Data Rows)
@@ -148,9 +161,12 @@ async function loadUltimoAlunoTurma(turma) {
   let success = 0;
   let message = "Algo deu errado. Tente novamente";
 
-  let query = `SELECT id, turma, aluno, turno, stts FROM chamados WHERE dia = '${today}' AND turma = '${turma}' ORDER BY id DESC LIMIT 1`;
-
-  const rows = await db.query(query);
+  const rows = await db.query(`SELECT id, turma, aluno, turno, stts
+                               FROM chamados
+                               WHERE dia = '${today}'
+                               AND turma = '${turma}'                             
+                               ORDER BY id DESC
+                               LIMIT 1`);
   const results = helper.emptyOrRows(rows);
 
   if (results.length >= 1) {
@@ -182,7 +198,7 @@ async function registraAlunoFalado(aluno) {
   return { success, message };
 }
 
-/**
+/** OP: 10
  * Carrega o último aluno não falado por turma
  * @Params body {turma {String}
  * @returns success (int), message (String), results (Data Rows)
@@ -193,9 +209,12 @@ async function carregaAlunoNaoFalado(turma) {
   let success = 0;
   let message = "Algo deu errado. Tente novamente";
 
-  let query = `SELECT id, turma, aluno, turno, stts FROM chamados WHERE dia = '${today}' AND turma = '${turma}' AND stts = 0 ORDER BY id DESC`;
-
-  const rows = await db.query(query);
+  const rows = await db.query(`SELECT id, turma, aluno, turno, stts
+                               FROM chamados
+                               WHERE dia = '${today}'
+                               AND turma = '${turma}'
+                               AND stts = 0
+                               ORDER BY id DESC`);
   const results = helper.emptyOrRows(rows);
 
   if (results.length >= 1) {
@@ -205,7 +224,7 @@ async function carregaAlunoNaoFalado(turma) {
   return { success, message, results };
 }
 
-/**
+/** OP: 11
  * Carrega o balanço de chamados do dia
  * @Params dia (String)
  * @returns success (int), message (String), results (Data Rows)
@@ -214,9 +233,11 @@ async function carregaBalancoDia(dia = today) {
   let success = 0;
   let message = "Nenhum balanço a ser carregado";
 
-  let query = `SELECT COUNT(id) AS total, dia FROM backup WHERE dia = ${dia} GROUP BY dia ORDER BY dia DESC`;
-
-  const rows = await db.query();
+  const rows = await db.query(`SELECT COUNT(id) AS total, dia
+                               FROM backup
+                               WHERE dia = ${dia}
+                               GROUP BY dia
+                               ORDER BY dia DESC`);
   const results = helper.emptyOrRows(rows);
 
   if (results.length >= 1) {
@@ -228,10 +249,10 @@ async function carregaBalancoDia(dia = today) {
 
 //Torna os modulos disponiveis para as outras salas
 module.exports = {
-  loadNomesSalas,
-  loadAlunosSalas,
-  callAlunosSalas,
-  loadAlunosChamadosDia,
+  carregaNomesSalas,
+  carregaAlunosSalas,
+  chamarAluno,
+  carregarAlunosChamadosDia,
   loadAlunosNaoChamados,
   loadAlunosChamadosTurma,
   loadUltimoAlunoTurma,
