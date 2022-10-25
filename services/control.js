@@ -296,12 +296,13 @@ async function carregaBalancoDia(dia = today) {
 //Torna os modulos disponiveis para as outras salas
 module.exports = {
   carregaNomesSalas,
-  carregarAlunosSalas,
+  carregaAlunosSalas,
   chamarAluno,
   carregarAlunosChamadosDia,
   carregarAlunosNaoChamados,
   carregarAlunosChamadosTurma,
   carregaUltimoAlunoTurma,
+  carregaUltimoAlunoGeral,
   registrarAlunoFalado,
   carregarAlunoNaoFalado,
   carregaBalancoDia,
