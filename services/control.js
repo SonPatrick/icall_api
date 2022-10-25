@@ -221,7 +221,7 @@ async function carregaUltimoAlunoTurma(turma) {
  * @Params body {aluno {String}
  * @returns success (int), message (String), results (Data Rows)
  */
-async function registrarAlunoFalado(aluno) {
+async function registraAlunoFalado(aluno) {
   let success = 0;
   let message = "Algo deu errado. Tente novamente";
 
@@ -243,7 +243,7 @@ async function registrarAlunoFalado(aluno) {
  * @Params body {turma {String}
  * @returns success (int), message (String), results (Data Rows)
  */
-async function carregarAlunoNaoFalado(turma) {
+async function carregaAlunoNaoFalado(turma) {
   let dt = datetime.create();
   let today = dt.format("d/m/Y");
   let success = 0;
@@ -303,7 +303,7 @@ module.exports = {
   carregarAlunosChamadosTurma,
   carregaUltimoAlunoTurma,
   carregaUltimoAlunoGeral,
-  registrarAlunoFalado,
-  carregarAlunoNaoFalado,
+  registraAlunoFalado,
+  carregaAlunoNaoFalado,
   carregaBalancoDia,
 };
