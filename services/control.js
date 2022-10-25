@@ -2,7 +2,7 @@ const helper = require("../helper");
 let datetime = require("node-datetime");
 let dt = datetime.create();
 let hoje = new Date();
-let today = dt.format("dd/mm/Y");
+let today = dt.format("d/m/Y");
 process.env.TZ = "America/Belem";
 const db = require("./db");
 
@@ -10,13 +10,16 @@ const db = require("./db");
  * Carrega o nome das salas
  * @returns success (int), message (String), results (Data Rows)
  */
-async function carregarNomesSalas() {
+async function carregaNomesSalas() {
   const rows = await db.query(`SELECT DISTINCT(turma) FROM turma ORDER BY turma ASC`);
   let data = helper.emptyOrRows(rows);
 
   if (data.length >= 1) {
     success = 1;
     message = "Lista de salas carregada com sucesso.";
+  } else{
+    success = 0;
+    message = "nenhum resultado a ser carregado.";
   }
   return { success, message, data };
 }
@@ -25,7 +28,7 @@ async function carregarNomesSalas() {
  * Carrega o nome dos alunos relacionados às suas salas e turnos
  * @returns success (int), message (String), results (Data Rows)
  */
-async function carregarAlunosSalas() {
+async function carregaAlunosSalas() {
   let turno = hoje.getHours() <= 13 ? "M" : "T";
   let success = 0;
   let message = "Algo deu errado. Tente novamente";
@@ -40,6 +43,9 @@ async function carregarAlunosSalas() {
   if (results.length >= 1) {
     success = 1;
     message = "Lista de alunos carregada com sucesso.";
+  } else{
+    success = 0;
+    message = "nenhum resultado a ser carregado.";
   }
   return { success, message, results };
 }
@@ -51,23 +57,17 @@ async function carregarAlunosSalas() {
  */
 async function chamarAluno(body) {
   let dt = datetime.create();
-  let today = dt.format("dd/mm/Y");
+  let today = dt.format("d/m/Y");
   let agora = dt.format("H:M:S");
 
   let turno = hoje.getHours() <= 13 ? "M" : "T";
   let success = 0;
   let message = "Aluno não chamado";
 
-  await db
-    .query(
-      `INSERT INTO chamados (id, aluno, turma, turno, dia, hora, stts) VALUES(NULL, '${body.aluno}' , '${body.turma}', '${turno}', '${today}', '${agora}', 0)`
-    )
+  await db.query(`INSERT INTO chamados (id, aluno, turma, turno, dia, hora, stts) VALUES(NULL, '${body.aluno}' , '${body.turma}', '${turno}', '${today}', '${agora}', 0)`)
     .then(async () => {
-      await db
-        .query(
-          `INSERT INTO backup (id, aluno, turma, turno, dia, hora, stts) VALUES(NULL, '${body.aluno}' , '${body.turma}', '${turno}', '${today}', '${agora}', 0)`
-        )
-        .then(async () => {
+      await db.query(`INSERT INTO backup (id, aluno, turma, turno, dia, hora, stts) VALUES(NULL, '${body.aluno}' , '${body.turma}', '${turno}', '${today}', '${agora}', 0)`
+        ).then(async () => {
           success = 1;
           message = "Aluno chamado com sucesso.";
         });
@@ -81,12 +81,12 @@ async function chamarAluno(body) {
  */
 async function carregarAlunosChamadosDia() {
   let dt = datetime.create();
-  let today = dt.format("dd/mm/Y");
+  let today = dt.format("d/m/Y");
   let turno = hoje.getHours() <= 13 ? "M" : "T";
   let success = 0;
   let message = "Algo deu errado. Tente novamente";
 
-  const rows = await db.query(`SELECT id, turma, aluno, turno, stts
+  const rows = await db.query(`SELECT DISTINCT(aluno), id, turma, turno, stts
                                FROM chamados
                                WHERE dia = '${today}'
                                AND turno = '${turno}'
@@ -107,7 +107,7 @@ async function carregarAlunosChamadosDia() {
  */
 async function carregarAlunosNaoChamados(turma) {
   let dt = datetime.create();
-  let today = dt.format("dd/mm/Y");
+  let today = dt.format("d/m/Y");
   let turno = hoje.getHours() <= 13 ? "M" : "T";
   let success = 0;
   let message = "Algo deu errado. Tente novamente";
@@ -124,7 +124,7 @@ async function carregarAlunosNaoChamados(turma) {
   if (results.length >= 1) {
     success = 1;
     message = "Lista de alunos carregada com sucesso.";
-  } if (results.length <= 0) {
+  } else{
     success = 0;
     message = "nenhum aluno a ser carregado.";
   }
@@ -138,7 +138,7 @@ async function carregarAlunosNaoChamados(turma) {
  */
 async function carregarAlunosChamadosTurma(turma) {
   let dt = datetime.create();
-  let today = dt.format("dd/mm/Y");
+  let today = dt.format("d/m/Y");
   let success = 0;
   let message = "Algo deu errado. Tente novamente";
 
@@ -152,6 +152,9 @@ async function carregarAlunosChamadosTurma(turma) {
   if (results.length >= 1) {
     success = 1;
     message = "Lista de alunos carregada com sucesso.";
+  } else{
+    success = 0;
+    message = "nenhum resultado a ser carregado.";
   }
   return { success, message, results };
 }
@@ -161,9 +164,37 @@ async function carregarAlunosChamadosTurma(turma) {
  * @Params body {turma {String}
  * @returns success (int), message (String), results (Data Rows)
  */
-async function carregarUltimoAlunoTurma(turma) {
+ async function carregaUltimoAlunoGeral(turma) {
   let dt = datetime.create();
-  let today = dt.format("dd/mm/Y");
+  let today = dt.format("d/m/Y");
+  let success = 0;
+  let message = "Algo deu errado. Tente novamente";
+
+  const rows = await db.query(`SELECT id, turma, aluno, turno, stts
+                               FROM chamados
+                               WHERE dia = '${today}'                                                      
+                               ORDER BY id DESC
+                               LIMIT 1`);
+  const results = helper.emptyOrRows(rows);
+
+  if (results.length >= 1) {
+    success = 1;
+    message = "Lista de alunos carregada com sucesso.";
+  } else{
+    success = 0;
+    message = "nenhum resultado a ser carregado.";
+  }
+  return { success, message, results };
+}
+
+/** OP: 07
+ * Carrega o último aluno chamado por turma
+ * @Params body {turma {String}
+ * @returns success (int), message (String), results (Data Rows)
+ */
+async function carregaUltimoAlunoTurma(turma) {
+  let dt = datetime.create();
+  let today = dt.format("d/m/Y");
   let success = 0;
   let message = "Algo deu errado. Tente novamente";
 
@@ -178,6 +209,9 @@ async function carregarUltimoAlunoTurma(turma) {
   if (results.length >= 1) {
     success = 1;
     message = "Lista de alunos carregada com sucesso.";
+  } else{
+    success = 0;
+    message = "nenhum resultado a ser carregado.";
   }
   return { success, message, results };
 }
@@ -211,7 +245,7 @@ async function registrarAlunoFalado(aluno) {
  */
 async function carregarAlunoNaoFalado(turma) {
   let dt = datetime.create();
-  let today = dt.format("dd/mm/Y");
+  let today = dt.format("d/m/Y");
   let success = 0;
   let message = "Algo deu errado. Tente novamente";
 
@@ -226,7 +260,7 @@ async function carregarAlunoNaoFalado(turma) {
   if (results.length >= 1) {
     success = 1;
     message = "Lista de alunos carregada com sucesso.";
-  }if (results.length <= 0) {
+  } else{
     success = 0;
     message = "nenhum resultado a ser carregado.";
   }
@@ -238,7 +272,7 @@ async function carregarAlunoNaoFalado(turma) {
  * @Params dia (String)
  * @returns success (int), message (String), results (Data Rows)
  */
-async function carregarBalancoDia(dia = today) {
+async function carregaBalancoDia(dia = today) {
   let success = 0;
   let message = "Nenhum balanço a ser carregado";
 
@@ -252,20 +286,23 @@ async function carregarBalancoDia(dia = today) {
   if (results.length >= 1) {
     success = 1;
     message = "Lista de alunos carregada com sucesso.";
+  } else {
+    success = 0;
+    message = "nenhum resultado a ser carregado.";
   }
   return { success, message, results };
 }
 
 //Torna os modulos disponiveis para as outras salas
 module.exports = {
-  carregarNomesSalas,
+  carregaNomesSalas,
   carregarAlunosSalas,
   chamarAluno,
   carregarAlunosChamadosDia,
   carregarAlunosNaoChamados,
   carregarAlunosChamadosTurma,
-  carregarUltimoAlunoTurma,
+  carregaUltimoAlunoTurma,
   registrarAlunoFalado,
   carregarAlunoNaoFalado,
-  carregarBalancoDia,
+  carregaBalancoDia,
 };
