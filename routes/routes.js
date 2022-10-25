@@ -1,6 +1,6 @@
 const control = require("../services/control.js");
 const express = require("express");
-const router = express.Router();
+const  router = express.Router();
 
 /* Essa é uma classe responsavel pelo gerenciamento das operacoes no banco de dados com base nas rotas acessadas */
 
@@ -81,7 +81,7 @@ router.get("/carregarAlunosNaoChamados/:turma", async function (req, res, next) 
 router.get("/carregaAlunosChamadosTurma/:turma", async function (req, res, next) {
   try {
     res.status(200);
-    res.json(await control.carregarAlunosChamadosTurma(req.params.turma));
+    res.json(await control.carregaAlunosChamadosTurma(req.params.turma));
   } catch (err) {
     res.status(404);
     console.error(`Erro ao carregar os dados.`, err.message);
@@ -148,10 +148,10 @@ router.get("/carregaAlunoNaoFalado/:turma", async function (req, res, next) {
 /** OP: 11
  * Rota que invoca o método de carregamento do balanço de chamadas geral
  */
-router.post("/carregarBalancoDia", async function (req, res, next) {
+router.post("/carregaBalancoDia", async function (req, res, next) {
   try {
     res.status(200);
-    res.json(await control.carregarBalancoDia(req.body.dia));
+    res.json(await control.carregaBalancoDia(req.body.dia));
   } catch (err) {
     res.status(404);
     console.error(`Erro ao carregar os dados.`, err.message);

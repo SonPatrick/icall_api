@@ -15,7 +15,7 @@ app.use(helmet());
 app.use(express.json());
 app.use(morgan("combined"));
 app.use(express.urlencoded({ extended: true }));
-
+''
 //Define o logger {combined, common , {:id :method :url :response-time} }
 var accessLogStream = fs.createWriteStream(
   path.join(`${__dirname}/logs`, "access.log"),
